@@ -1,5 +1,5 @@
 # Use the official MySQL 8.0 image from Docker Hub
-FROM mysql:8.0.31
+FROM mysql:8.0.42
 
 # Environment variables
 ENV MYSQL_ALLOW_EMPTY_PASSWORD="yes"
