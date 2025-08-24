@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  eureka-sv:
+    build: ./eureka-sv 
+    mem_limit: 512m
+    ports:
+      - "8761:8761"
+    networks:
+      - 'microservices-network'
+
+  mysql:
+    build: ./my-mysql
+    mem_limit: 512m
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: db_user
+    networks:
+      - 'microservices-network'
+
+  microservice-account:
+    build: ./auth.service
+    mem_limit: 512m
+    ports:
+      - "8082:8082"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-sv:8761/eureka
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/db_account?createDatabaseIfNotExist=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+    depends_on:
+      - eureka-sv
+      - mysql
+    networks:
+      - 'microservices-network'
+
+networks:
+  microservices-network:
